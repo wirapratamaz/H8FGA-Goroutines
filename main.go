@@ -2,38 +2,28 @@ package main
 
 import (
 	"fmt"
-	"runtime"
-	"time"
+	"sync"
 )
 
 func main() {
-	fmt.Println("main execution started")
+	fruits := []string{"Apple", "Mango", "Strawberry", "Durian"}
 
-	// dua fungsi secara concurrent atau parallel
-	go firstProcess(8)
-	secondProcess(8)
+	// WaitGroup adalah sebuah struktur data yang digunakan untuk menunggu (wait) satu atau lebih
+	// goroutine untuk menyelesaikan tugas mereka sebelum proses selanjutnya dilakukan.
+	var wg sync.WaitGroup //variable wg yang bertipe sync.WaitGroup
 
-	// menampilkan jumlah goroutine yang sedang berjalan
-	fmt.Println("No. of Goroutines:", runtime.NumGoroutine())
-
-	// pemanggilan fungsi jeda
-	time.Sleep(time.Second * 2)
-
-	// setelah semua goroutine selesai dieksekusi
-	fmt.Println("Main execution ended")
+	//perulangan pada slice fruits
+	for index, fruit := range fruits {
+		//Setiap goroutine menambahkan 1 ke WaitGroup
+		wg.Add(1)
+		go printFruit(index, fruit, &wg)
+	}
+	// last -  menunggu sampai semua goroutine selesai
+	wg.Wait()
 }
 
-func firstProcess(index int) {
-	fmt.Println("First process func started")
-	for i := 1; i <= index; i++ {
-		fmt.Println("i=", i)
-	}
-	fmt.Println("First Process func ended")
-}
-func secondProcess(index int) {
-	fmt.Println("second process func started")
-	for j := 1; j <= index; j++ {
-		fmt.Println("j=", j)
-	}
-	fmt.Println("second Process func ended")
+func printFruit(index int, fruit string, wg *sync.WaitGroup) {
+	fmt.Printf("Index => %d, fruit => %s\n", index, fruit)
+	//Ini mengurangi hitungan tunggu WaitGroup sebanyak 1
+	wg.Done()
 }
