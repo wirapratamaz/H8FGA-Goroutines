@@ -2,38 +2,32 @@ package main
 
 import (
 	"fmt"
-	"runtime"
-	"time"
+	"os"
 )
 
 func main() {
-	fmt.Println("main execution started")
+	//*case 1 defer
+	//block sebuah function hingga selesai
+	defer fmt.Println("defer functioin starts to execute")
+	fmt.Println("Hai everyone!!")
+	fmt.Println("Welcome back to course Golang by Hactiv 8")
 
-	// dua fungsi secara concurrent atau parallel
-	go firstProcess(8)
-	secondProcess(8)
+	//*case 2 defer
+	callDefereFunc() //output yg dikeluarkan akan lebih dulu
+	fmt.Println("Hello Everyone")
 
-	// menampilkan jumlah goroutine yang sedang berjalan
-	fmt.Println("No. of Goroutines:", runtime.NumGoroutine())
-
-	// pemanggilan fungsi jeda
-	time.Sleep(time.Second * 2)
-
-	// setelah semua goroutine selesai dieksekusi
-	fmt.Println("Main execution ended")
+	//*case 3 exit
+	defer fmt.Println("Invoke with defer")
+	fmt.Println("Before exiting")
+	//menghentikan suatu program secara paksa
+	os.Exit(1)
 }
 
-func firstProcess(index int) {
-	fmt.Println("First process func started")
-	for i := 1; i <= index; i++ {
-		fmt.Println("i=", i)
-	}
-	fmt.Println("First Process func ended")
+// * case 2 defer
+func callDefereFunc() {
+	defer deferFunc() //dipanggil dalam block function ini bukan main
 }
-func secondProcess(index int) {
-	fmt.Println("second process func started")
-	for j := 1; j <= index; j++ {
-		fmt.Println("j=", j)
-	}
-	fmt.Println("second Process func ended")
+
+func deferFunc() {
+	fmt.Println("Defer function starts to execute")
 }
