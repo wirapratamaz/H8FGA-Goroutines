@@ -1,39 +1,61 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"runtime"
-	"time"
+	"strconv"
 )
 
 func main() {
-	fmt.Println("main execution started")
+	// //* error
+	var number int
+	var err error
 
-	// dua fungsi secara concurrent atau parallel
-	go firstProcess(8)
-	secondProcess(8)
+	//case error 1
+	number, err = strconv.Atoi("123456H") //false
 
-	// menampilkan jumlah goroutine yang sedang berjalan
-	fmt.Println("No. of Goroutines:", runtime.NumGoroutine())
+	if err == nil {
+		fmt.Println(number)
+	} else {
+		fmt.Println(err.Error())
+	}
 
-	// pemanggilan fungsi jeda
-	time.Sleep(time.Second * 2)
+	number, err = strconv.Atoi("123") //true
 
-	// setelah semua goroutine selesai dieksekusi
-	fmt.Println("Main execution ended")
+	//case error 2
+	if err == nil {
+		fmt.Println(number)
+	} else {
+		fmt.Println(err.Error())
+	}
+
+	//* custom error
+	var password string
+
+	fmt.Print("Masukkan password :")
+	fmt.Scanln(&password)
+
+	// cek password dengan fungsi 'validPassword()'
+	if valid, err := validPassword(password); err != nil {
+		//error message ke console
+		fmt.Println(err.Error())
+	} else {
+		//password valid
+		fmt.Println(valid)
+	}
+
 }
 
-func firstProcess(index int) {
-	fmt.Println("First process func started")
-	for i := 1; i <= index; i++ {
-		fmt.Println("i=", i)
+// * custom error
+// validasi password
+func validPassword(password string) (string, error) {
+	// mendapatkan panjang password
+	pl := len(password)
+
+	// Jika panjang password kurang dari 5 karakter
+	if pl < 5 {
+		return "", errors.New("password has to have more than 4 characters")
 	}
-	fmt.Println("First Process func ended")
-}
-func secondProcess(index int) {
-	fmt.Println("second process func started")
-	for j := 1; j <= index; j++ {
-		fmt.Println("j=", j)
-	}
-	fmt.Println("second Process func ended")
+	// Jika password valid
+	return "Valid password", nil
 }
